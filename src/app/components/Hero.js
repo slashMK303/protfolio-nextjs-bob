@@ -63,7 +63,7 @@ export default function Hero() {
                     className="flex justify-center items-center"
                 >
                     <Image
-                        src="/img/heroimg.jpg"
+                        src="/img/hero.jpg"
                         alt="Nanang Marvin Portrait"
                         width={300}
                         height={300}
