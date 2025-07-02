@@ -1,0 +1,63 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+export default function Footer() {
+    const [localTime, setLocalTime] = useState("");
+
+    useEffect(() => {
+        const updateTime = () => {
+            const now = new Date();
+            const options = {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true,
+                timeZoneName: "short",
+            };
+            const formattedTime = now.toLocaleTimeString("id-ID", options);
+            setLocalTime(formattedTime);
+        };
+
+        updateTime();
+        const interval = setInterval(updateTime, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <footer className="bg-[#e8e8e8] text-black text-sm py-20 md:py-50 px-6 w-full">
+            <div className="mx-auto grid grid-cols-2 gap-8 pb-6">
+
+                <div>
+                    <h3 className="md:text-xl text-lg font-semibold mb-2 border-b border-gray-300 inline-block w-full">Menu</h3>
+                    <ul className="mt-2 space-y-1">
+                        <li><a href="#home" className="hover:underline">Home</a></li>
+                        <li><a href="#services" className="hover:underline">Services</a></li>
+                        <li><a href="#works" className="hover:underline">Works</a></li>
+                        <li><a href="#about" className="hover:underline">About</a></li>
+                        <li><a href="#contact" className="hover:underline">Contact</a></li>
+                    </ul>
+                </div>
+
+
+                <div>
+                    <h3 className="md:text-xl text-lg font-semibold mb-2 border-b border-gray-300 inline-block w-full">Socials</h3>
+                    <ul className="mt-2 space-y-1">
+                        <li><a href="https://linkedin.com" target="_blank" className="hover:underline">Linkedin</a></li>
+                        <li><a href="https://instagram.com" target="_blank" className="hover:underline">Instagram</a></li>
+                        <li><a href="https://github.com" target="_blank" className="hover:underline">Github</a></li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div className="justify-end md:justify-center">
+                <div className="mt-6 text-right md:text-center">
+                    <p className="font-semibold">LOCAL TIME</p>
+                    <p>{localTime}</p>
+                </div>
+            </div>
+        </footer>
+    );
+}
