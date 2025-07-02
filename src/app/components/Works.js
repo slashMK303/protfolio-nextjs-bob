@@ -20,7 +20,7 @@ export default function Works() {
             number: '01',
             title: 'Indo Dragonica Private Server Website',
             description:
-                'IndoDragonica is an Indonesian community site for *Dragonica Online*, offering game guides, videos, and updates for local players.',
+                'IndoDragonica is an Indonesian community site for Dragonica Online, offering game guides, videos, and updates for local players.',
             thumbnail: '/img/project/idgn.png',
             demoLink: 'https://www.indodragonica.com/',
             viewText: 'VIEW PROJECT',
