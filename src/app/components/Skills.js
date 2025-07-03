@@ -51,7 +51,7 @@ export default function Skills() {
     return (
         <section
             ref={sectionRef}
-            className="bg-[#121212] text-[#e8e8e8] w-full px-8 py-20 pb-50 space-y-20 rounded-b-4xl"
+            className="bg-[#121212] text-[#e8e8e8] w-full px-4 md:px-8 py-20 pb-50 space-y-20 rounded-b-4xl"
         >
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">

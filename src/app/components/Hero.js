@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function Hero() {
     return (
-        <section className="min-h-screen flex flex-col justify-center items-center bg-[#e8e8e3] text-gray-800 px-8 py-16">
+        <section className="min-h-screen flex flex-col justify-center items-center bg-[#e8e8e3] text-gray-800 px-4 md:px-8 py-16">
 
             <div className="w-full flex items-center justify-center text-center mb-16 md:mb-24">
                 <motion.svg

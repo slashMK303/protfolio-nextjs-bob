@@ -91,9 +91,9 @@ export default function Works() {
         <section ref={sectionRef} className="relative w-full bg-[#121212] text-white h-screen md:h-full overflow-hidden">
             <div className="h-screen w-full flex flex-col md:flex-row">
 
-                <div className="w-full md:w-[40%] px-6 md:px-8 py-10 md:py-20 flex flex-col justify-start">
-                    <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-8 md:mb-12 leading-tight">SELECTED WORKS /</h2>
-                    <p className="text-gray-400 mb-10 md:mb-16 text-base md:text-lg max-w-xl">
+                <div className="w-full md:w-[40%] px-4 md:px-8 pt-5 h-40 lg:py-20 flex flex-col justify-start">
+                    <h2 className="text-4xl md:text-6xl font-extrabold mb-8 md:mb-12 leading-tight">SELECTED WORKS /</h2>
+                    <p className="text-gray-400 mb-10 md:mb-16 -mt-5 text-base md:text-lg max-w-xl">
                         Crafting digital experiences that seamlessly merge functionality and aesthetics, resulting in something both memorable and refined.
                     </p>
                     <div className="hidden md:block">
@@ -110,14 +110,12 @@ export default function Works() {
                             </motion.div>
                         </AnimatePresence>
                     </div>
-
                 </div>
-
 
                 <div className="w-full md:w-[60%] h-full overflow-hidden">
                     <div ref={contentWrapperRef}>
                         {projects.map((p) => (
-                            <div key={p.id} className="w-full h-screen flex items-center justify-center px-8 md:px-12">
+                            <div key={p.id} className="w-full h-screen flex items-center justify-center px-4 md:px-8">
                                 <div className="w-full flex flex-col lg:flex-row items-center justify-end gap-8">
 
                                     <div className="w-full h-[40vh] md:h-[50vh] lg:h-[85vh] bg-gray-700 relative overflow-hidden rounded-xl shadow-lg">

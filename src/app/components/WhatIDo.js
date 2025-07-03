@@ -71,7 +71,7 @@ export default function WhatIDo() {
     return (
         <section
             ref={sectionRef}
-            className="relative min-h-screen bg-[#121212] text-neutral-200 px-8 py-24 overflow-hidden"
+            className="relative min-h-screen bg-[#121212] text-neutral-200 px-4 md:px-8 py-24 overflow-hidden"
         >
 
             <div className="grid md:grid-cols-1 gap-6 items-center justify-star md:justify-center">
