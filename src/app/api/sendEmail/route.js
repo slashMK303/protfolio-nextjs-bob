@@ -26,8 +26,8 @@ export async function POST(req) {
     `;
 
         await resend.emails.send({
-            from: 'Nanang <marvinkurniawan@nanangmarvin.my.id>',
-            to: ['nanangm.dev@gmail.com'],
+            from: process.env.EMAIL_FROM,
+            to: process.env.EMAIL_TO,
             subject: `Pesan dari ${name}`,
             html,
         });
@@ -35,9 +35,6 @@ export async function POST(req) {
         return Response.json({ success: true });
     } catch (error) {
         console.error('Resend Error:', error);
-        return new Response(
-            JSON.stringify({ error: 'Gagal mengirim email' }),
-            { status: 500 }
-        );
+        return new Response(JSON.stringify({ error: 'Gagal mengirim email' }), { status: 500 });
     }
 }
