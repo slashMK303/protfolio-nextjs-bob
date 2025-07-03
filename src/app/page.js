@@ -21,7 +21,7 @@ export default function Home() {
         <section id="works" className="section-padding">
           <Works />
         </section>
-        <section id="about" className="section-padding">
+        <section id="about" className="section-padding bg-[#e8e8e8]">
           <About />
         </section>
         <section id="contact" className="section-padding">

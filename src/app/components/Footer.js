@@ -25,21 +25,26 @@ export default function Footer() {
         return () => clearInterval(interval);
     }, []);
 
-    return (
-        <footer className="bg-[#e8e8e8] text-black text-sm py-20 md:py-50 px-6 w-full">
-            <div className="mx-auto grid grid-cols-2 gap-8 pb-6">
+    const scrollToId = (id) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    };
 
+    return (
+        <footer className="bg-[#e8e8e8] text-black text-sm pt-20 pb-10 md:pt-50 px-6 w-full">
+            <div className="mx-auto grid grid-cols-2 gap-8 pb-6">
                 <div>
                     <h3 className="md:text-xl text-lg font-semibold mb-2 border-b border-gray-300 inline-block w-full">Menu</h3>
                     <ul className="mt-2 space-y-1">
-                        <li><a href="#home" className="hover:underline">Home</a></li>
-                        <li><a href="#services" className="hover:underline">Services</a></li>
-                        <li><a href="#works" className="hover:underline">Works</a></li>
-                        <li><a href="#about" className="hover:underline">About</a></li>
-                        <li><a href="#contact" className="hover:underline">Contact</a></li>
+                        <li><button onClick={() => scrollToId("home")} className="hover:underline hover:cursor-pointer">Home</button></li>
+                        <li><button onClick={() => scrollToId("services")} className="hover:underline hover:cursor-pointer">Services</button></li>
+                        <li><button onClick={() => scrollToId("works")} className="hover:underline hover:cursor-pointer">Works</button></li>
+                        <li><button onClick={() => scrollToId("about")} className="hover:underline hover:cursor-pointer">About</button></li>
+                        <li><button onClick={() => scrollToId("contact")} className="hover:underline hover:cursor-pointer">Contact</button></li>
                     </ul>
                 </div>
-
 
                 <div>
                     <h3 className="md:text-xl text-lg font-semibold mb-2 border-b border-gray-300 inline-block w-full">Socials</h3>
@@ -50,7 +55,6 @@ export default function Footer() {
                     </ul>
                 </div>
             </div>
-
 
             <div className="justify-end md:justify-center">
                 <div className="mt-6 text-right md:text-center">

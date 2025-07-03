@@ -18,7 +18,7 @@ export default function Hero() {
                 >
                     <text
                         x="50%"
-                        y="50%"
+                        y="70%"
                         dominantBaseline="middle"
                         textAnchor="middle"
                         className="fill-gray-800"

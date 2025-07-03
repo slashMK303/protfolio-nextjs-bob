@@ -94,7 +94,7 @@ export default function Works() {
                 <div className="w-full md:w-[40%] px-6 md:px-8 py-10 md:py-20 flex flex-col justify-start">
                     <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-8 md:mb-12 leading-tight">SELECTED WORKS /</h2>
                     <p className="text-gray-400 mb-10 md:mb-16 text-base md:text-lg max-w-xl">
-                        Crafted digital experiences that blend utility and aesthetics into something functional, memorable, and refined.
+                        Crafting digital experiences that seamlessly merge functionality and aesthetics, resulting in something both memorable and refined.
                     </p>
                     <div className="hidden md:block">
                         <AnimatePresence mode="wait">
