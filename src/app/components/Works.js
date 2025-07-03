@@ -92,7 +92,7 @@ export default function Works() {
             <div className="h-screen w-full flex flex-col md:flex-row">
 
                 <div className="w-full md:w-[40%] px-6 md:px-8 py-10 md:py-20 flex flex-col justify-start">
-                    <h2 className="text-4xl md:text-7xl font-extrabold mb-8 md:mb-12 leading-tight">SELECTED WORKS /</h2>
+                    <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-8 md:mb-12 leading-tight">SELECTED WORKS /</h2>
                     <p className="text-gray-400 mb-10 md:mb-16 text-base md:text-lg max-w-xl">
                         Crafted digital experiences that blend utility and aesthetics into something functional, memorable, and refined.
                     </p>
@@ -118,9 +118,9 @@ export default function Works() {
                     <div ref={contentWrapperRef}>
                         {projects.map((p) => (
                             <div key={p.id} className="w-full h-screen flex items-center justify-center px-8 md:px-12">
-                                <div className="w-full flex flex-col md:flex-row items-center justify-end gap-8">
+                                <div className="w-full flex flex-col lg:flex-row items-center justify-end gap-8">
 
-                                    <div className="w-full h-[40vh] md:h-[85vh] bg-gray-700 relative overflow-hidden rounded-xl shadow-lg">
+                                    <div className="w-full h-[40vh] md:h-[50vh] lg:h-[85vh] bg-gray-700 relative overflow-hidden rounded-xl shadow-lg">
                                         <Image
                                             src={p.thumbnail}
                                             alt={p.title}
@@ -139,7 +139,7 @@ export default function Works() {
                                     </div>
 
 
-                                    <div className="w-full md:w-2/5 text-center md:text-left">
+                                    <div className="w-full lg:w-2/5 text-center md:text-left">
                                         <p className="text-sm text-gray-400">Nanang Marvin</p>
                                         <h3 className="text-2xl md:text-4xl font-bold mb-3">{p.title}</h3>
                                         <p className="text-sm md:text-base text-gray-300 mb-6">{p.description}</p>

@@ -44,9 +44,9 @@ export default function Footer() {
                 <div>
                     <h3 className="md:text-xl text-lg font-semibold mb-2 border-b border-gray-300 inline-block w-full">Socials</h3>
                     <ul className="mt-2 space-y-1">
-                        <li><a href="https://linkedin.com" target="_blank" className="hover:underline">Linkedin</a></li>
+                        <li><a href="https://www.linkedin.com/in/nanang-marvin-kurniawan-343a762a9/" target="_blank" className="hover:underline">Linkedin</a></li>
                         <li><a href="https://instagram.com" target="_blank" className="hover:underline">Instagram</a></li>
-                        <li><a href="https://github.com" target="_blank" className="hover:underline">Github</a></li>
+                        <li><a href="https://github.com/slashMK303" target="_blank" className="hover:underline">Github</a></li>
                     </ul>
                 </div>
             </div>

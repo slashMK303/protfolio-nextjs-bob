@@ -10,19 +10,19 @@ export default function Hero() {
 
             <div className="w-full flex items-center justify-center text-center mb-16 md:mb-24">
                 <motion.svg
-                    viewBox="0 0 1010 200"
-                    className="w-full h-auto"
+                    viewBox="0 0 1430 200"
+                    className="w-screen h-auto"
                     initial={{ opacity: 0, y: 60 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, ease: 'easeOut' }}
                 >
                     <text
                         x="50%"
-                        y="80%"
+                        y="50%"
                         dominantBaseline="middle"
                         textAnchor="middle"
                         className="fill-gray-800"
-                        fontSize="clamp(10rem, 10vw, 10rem)"
+                        fontSize="clamp(10rem, 10vw, 10.5rem)"
                         fontFamily="sans-serif"
                         fontWeight="750"
                     >
@@ -40,9 +40,9 @@ export default function Hero() {
                     className="md:col-span-1 text-center md:text-left"
                 >
                     <p className="text-lg md:text-4xl text-gray-800 leading-relaxed">
-                        Open to job opportunities worldwide.<br />
-                        Passionate about building polished,<br />
-                        intuitive, and thoughtful digital<br />
+                        Open to job opportunities worldwide.
+                        Passionate about building polished,
+                        intuitive, and thoughtful digital
                         experiences that leave a mark.
                     </p>
                     <Link href="#contact">

@@ -102,8 +102,8 @@ export default function Skills() {
             </div>
 
 
-            <div className="flex flex-col lg:flex-row gap-4 md:gap-150 items-start mt-28">
-                <div className="w-full max-w-md rounded-md overflow-hidden mx-auto md:mx-0">
+            <div className="flex flex-col lg:flex-row gap-4 lg:gap-100 items-start">
+                <div className="w-full max-w-md rounded-md overflow-hidden mx-auto md:mx-auto lg:mx-0">
                     <Image
                         src="/img/about.png"
                         alt="About Image"

@@ -33,7 +33,7 @@ export default function WhatIDo() {
                 ScrollTrigger.create({
                     trigger: el,
                     start: "top 30%",
-                    end: "+=83%",
+                    end: "+=100%",
                     pin: true,
                     pinSpacing: false,
                     // markers: true,
@@ -54,18 +54,18 @@ export default function WhatIDo() {
         },
         {
             id: "02",
-            title: "UI/UX & Frontend",
+            title: "Frontend",
             desc:
                 "Design is more than looks — it's about clarity and connection. I design and develop clean, responsive interfaces that feel intuitive across devices. My focus is on clarity, accessibility, and seamless user experiences.",
             stack: ["NextJs, TailwindCSS, GSAP", "Figma to Code"],
         },
-        {
-            id: "03",
-            title: "Optimization",
-            desc:
-                "Beyond handling data, I'm driven by the challenge of turning complex raw inputs into reliable, usable systems. I enjoy designing pipelines that power insights and apply core CS principles to build for scale, speed, and stability.",
-            stack: ["Data Structures & Algorithms", "DBMS, OOP, OS Fundamentals", "Data Pipelines, ETL, and Scalability"],
-        },
+        // {
+        //     id: "03",
+        //     title: "Optimization",
+        //     desc:
+        //         "Beyond handling data, I'm driven by the challenge of turning complex raw inputs into reliable, usable systems. I enjoy designing pipelines that power insights and apply core CS principles to build for scale, speed, and stability.",
+        //     stack: ["Data Structures & Algorithms", "DBMS, OOP, OS Fundamentals", "Data Pipelines, ETL, and Scalability"],
+        // },
     ];
 
     return (
@@ -107,7 +107,7 @@ export default function WhatIDo() {
                             <h3 className="text-4xl md:text-6xl font-bold mb-4">
                                 {skill.title}
                             </h3>
-                            <p className="text-lg md:text-xl text-neutral-400 leading-relaxed w-100">
+                            <p className="text-lg md:text-xl text-neutral-400 leading-relaxed md:w-100">
                                 {skill.desc}
                             </p>
                             <ul className="mt-4 space-y-2">
