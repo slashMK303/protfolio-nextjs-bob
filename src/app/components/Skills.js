@@ -40,7 +40,7 @@ export default function Skills() {
         },
         {
             title: 'Frameworks & Libraries',
-            skills: ['React', 'Node.js', 'Express.js', 'Flask', 'Bootstrap', 'jQuery', 'TailwindCSS', 'Framer Motion', 'GSAP']
+            skills: ['React', 'Node.js', 'Express.js', 'Bootstrap', 'jQuery', 'TailwindCSS', 'Framer Motion', 'GSAP']
         },
         {
             title: 'Core CS Concepts',

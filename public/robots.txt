@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://nanangmarvin.my.id/
+
+# Sitemaps
+Sitemap: https://nanangmarvin.my.id/sitemap.xml
