@@ -5,8 +5,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'Nanang Marvin - Web Developer',
-  description: 'Portfolio of Nanang Marvin, a Web Developer focused on building innovative digital products.',
-  keywords: 'web developer, web designer, frontend, backend, UI/UX, Next.js, React, Node.js, Tailwind CSS, full stack, nanang marvin kurniawan, nanang, nanang marvin',
+  description: 'Portfolio of Nanang Marvin Kurniawan, a Web Developer focused on building innovative digital products.',
+  keywords: 'web developer, web designer, frontend, backend, UI/UX, Next.js, React, Node.js, Tailwind CSS, full stack, Nanang Marvin Kurniawan, Nanang, Nanang Marvin',
 };
 
 export default function RootLayout({ children }) {
