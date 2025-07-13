@@ -3,10 +3,10 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req) {
-    try {
-        const { name, email, message } = await req.json();
+  try {
+    const { name, email, message } = await req.json();
 
-        const html = `
+    const html = `
       <div style="font-family: 'Inter', sans-serif; background-color: #f3f4f6; padding: 2rem; border-radius: 0.75rem; color: #111827;">
         <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: #1f2937;">
           📬 Pesan Baru dari Website Anda
@@ -25,16 +25,16 @@ export async function POST(req) {
       </div>
     `;
 
-        await resend.emails.send({
-            from: process.env.EMAIL_FROM,
-            to: process.env.EMAIL_TO,
-            subject: `Pesan dari ${name}`,
-            html,
-        });
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM,
+      to: process.env.EMAIL_TO,
+      subject: `Pesan dari ${name}`,
+      html,
+    });
 
-        return Response.json({ success: true });
-    } catch (error) {
-        console.error('Resend Error:', error);
-        return new Response(JSON.stringify({ error: 'Gagal mengirim email' }), { status: 500 });
-    }
+    return Response.json({ success: true });
+  } catch (error) {
+    console.error('Resend Error:', error);
+    return new Response(JSON.stringify({ error: 'Gagal mengirim email' }), { status: 500 });
+  }
 }
