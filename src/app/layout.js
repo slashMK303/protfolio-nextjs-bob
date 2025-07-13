@@ -7,6 +7,7 @@ export const metadata = {
   title: 'Nanang Marvin - Web Developer',
   description: 'Portfolio of Nanang Marvin Kurniawan, a Web Developer focused on building innovative digital products.',
   keywords: 'web developer, web designer, frontend, backend, UI/UX, Next.js, React, Node.js, Tailwind CSS, full stack, Nanang Marvin Kurniawan, Nanang, Nanang Marvin',
+<<<<<<< HEAD
 
   openGraph: {
     title: 'Nanang Marvin - Web Developer',
@@ -30,6 +31,8 @@ export const metadata = {
     description: 'Portfolio of Nanang Marvin Kurniawan, Web Developer focused on building impactful digital experiences.',
     images: ['https://nanangmarvin.my.id/img/hero.jpg'],
   },
+=======
+>>>>>>> ed1fb9481044c7797810fcda1a0f0f86c7051bfb
 };
 
 export default function RootLayout({ children }) {
