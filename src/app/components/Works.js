@@ -19,18 +19,15 @@ export default function Works() {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const res = await fetch('/api/projects'); // Menggunakan path relatif, ini akan otomatis mengarah ke API Anda
+                const res = await fetch('/api/projects');
                 if (!res.ok) {
                     throw new Error('Failed to fetch projects');
                 }
                 const data = await res.json();
 
-                // Memastikan format data sesuai dengan yang diharapkan
-                // Jika perlu, Anda bisa menambahkan field 'number' di sini
-                // atau langsung di database Firebase
                 const formattedProjects = data.map((p, index) => ({
                     id: p.id,
-                    number: (index + 1).toString().padStart(2, '0'), // Membuat '01', '02', dst.
+                    number: (index + 1).toString().padStart(2, '0'),
                     title: p.title || '',
                     description: p.description || '',
                     thumbnail: p.thumbnail || '',
@@ -39,6 +36,10 @@ export default function Works() {
                 }));
 
                 setProjects(formattedProjects);
+
+                // Tambahkan baris ini untuk memperbarui semua ScrollTrigger
+                ScrollTrigger.refresh();
+
             } catch (error) {
                 console.error('Error fetching projects:', error);
             } finally {

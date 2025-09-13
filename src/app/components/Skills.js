@@ -10,27 +10,39 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Skills() {
     const sectionRef = useRef(null);
+    const hasInitialized = useRef(false);
 
     useEffect(() => {
-        if (!sectionRef.current) return;
+        const handleLoad = () => {
+            if (sectionRef.current && !hasInitialized.current) {
+                hasInitialized.current = true;
+                const ctx = gsap.context(() => {
+                    gsap.to(sectionRef.current, {
+                        scale: 0.97,
+                        scrollTrigger: {
+                            trigger: sectionRef.current,
+                            start: "top top", // Ubah start menjadi "top top"
+                            end: "bottom top",
+                            scrub: true,
+                            refreshPriority: 0, // Beri prioritas lebih rendah
+                        },
+                        transformOrigin: "center top",
+                        ease: "none",
+                    });
+                }, sectionRef);
 
-        const ctx = gsap.context(() => {
-            gsap.to(sectionRef.current, {
-                scale: 0.97,
-                // duration: 2,
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "10% top",
-                    end: "bottom top",
-                    scrub: true,
-                    // markers: true,
-                },
-                transformOrigin: "center top",
-                ease: "none",
-            });
-        }, sectionRef);
+                return () => ctx.revert();
+            }
+        };
 
-        return () => ctx.revert();
+        if (document.readyState === 'complete') {
+            handleLoad();
+        } else {
+            window.addEventListener('load', handleLoad);
+        }
+
+        return () => window.removeEventListener('load', handleLoad);
+
     }, []);
 
     const categories = [
