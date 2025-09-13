@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { db } from '.././lib/firebase';
+import { db, auth } from '.././lib/firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import { put } from '@vercel/blob';
 import Image from 'next/image';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 // Fungsi helper untuk mengekstrak nama file dari URL Blob
 const extractFileNameFromUrl = (url) => {
@@ -20,11 +22,14 @@ const extractFileNameFromUrl = (url) => {
 };
 
 export default function AdminPage() {
+    const router = useRouter();
     const [projects, setProjects] = useState([]);
     const [loadingProjects, setLoadingProjects] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [currentProjectId, setCurrentProjectId] = useState(null);
     const [thumbnailFileName, setThumbnailFileName] = useState('');
+    const [user, setUser] = useState(null);
+    const [loadingUser, setLoadingUser] = useState(true);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -39,19 +44,37 @@ export default function AdminPage() {
     const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
 
     useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const res = await fetch('/api/projects');
-                const data = await res.json();
-                setProjects(data);
-            } catch (error) {
-                console.error("Failed to fetch projects:", error);
-            } finally {
-                setLoadingProjects(false);
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                setUser(currentUser);
+                const fetchProjects = async () => {
+                    try {
+                        const res = await fetch('/api/projects');
+                        const data = await res.json();
+                        setProjects(data);
+                    } catch (error) {
+                        console.error("Failed to fetch projects:", error);
+                    } finally {
+                        setLoadingProjects(false);
+                    }
+                };
+                fetchProjects();
+            } else {
+                router.push('/login');
             }
-        };
-        fetchProjects();
-    }, []);
+            setLoadingUser(false);
+        });
+        return () => unsubscribe();
+    }, [router]);
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            router.push('/login');
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
@@ -177,9 +200,26 @@ export default function AdminPage() {
         setFile(null);
     };
 
+    if (loadingUser) {
+        return <div className="bg-[#121212] min-h-screen flex items-center justify-center text-white">Loading...</div>;
+    }
+
+    if (!user) {
+        return null; // Tidak perlu render apa pun jika pengguna tidak ada, karena router akan me-redirect
+    }
+
     return (
         <div className="bg-[#121212] min-h-screen text-white p-8">
-            <h1 className="text-3xl font-bold mb-6">{isEditing ? 'Edit Project' : 'Add New Project'}</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">{isEditing ? 'Edit Project' : 'Add New Project'}</h1>
+                <button
+                    onClick={handleLogout}
+                    className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition duration-200"
+                >
+                    Logout
+                </button>
+            </div>
+
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <input
                     type="text"
