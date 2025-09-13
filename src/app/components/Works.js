@@ -13,52 +13,44 @@ export default function Works() {
     const sectionRef = useRef(null);
     const contentWrapperRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
-
-    const projects = [
-        {
-            id: 'proj-01',
-            number: '01',
-            title: 'Indo Dragonica Private Server Website',
-            description:
-                'IndoDragonica is an Indonesian community site for Dragonica Online, offering game guides, videos, and updates for local players.',
-            thumbnail: '/img/project/idgn.png',
-            demoLink: 'https://www.indodragonica.com/',
-            viewText: 'VIEW PROJECT',
-        },
-        {
-            id: 'proj-02',
-            number: '02',
-            title: 'Portfolio Website v1',
-            description:
-                'A portfolio website for Nanang Marvin, showcasing his skills and projects.',
-            thumbnail: '/img/project/personalweb.jpg',
-            demoLink: 'https://nanangmarvin-8ko8wl5tz-vinnns-projects.vercel.app/',
-            viewText: 'VIEW PROJECT',
-        },
-        {
-            id: 'proj-03',
-            number: '03',
-            title: 'QR Code Generator',
-            description:
-                'A QR code generator for generating and downloading QR codes for various purposes.',
-            thumbnail: '/img/project/qrgenerator.jpg',
-            demoLink: 'https://slashmk303.github.io/qr-code-generate-simple/',
-            viewText: 'VIEW PROJECT',
-        },
-        {
-            id: 'proj-04',
-            number: '04',
-            title: 'Genocide Egg(Game)',
-            description:
-                'a game project I made while studying in college.',
-            thumbnail: '/img/project/genocideegg.png',
-            demoLink: 'https://marvin195.itch.io/genocide-egg',
-            viewText: 'VIEW PROJECT',
-        },
-    ];
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!sectionRef.current || !contentWrapperRef.current) return;
+        const fetchProjects = async () => {
+            try {
+                const res = await fetch('/api/projects'); // Menggunakan path relatif, ini akan otomatis mengarah ke API Anda
+                if (!res.ok) {
+                    throw new Error('Failed to fetch projects');
+                }
+                const data = await res.json();
+
+                // Memastikan format data sesuai dengan yang diharapkan
+                // Jika perlu, Anda bisa menambahkan field 'number' di sini
+                // atau langsung di database Firebase
+                const formattedProjects = data.map((p, index) => ({
+                    id: p.id,
+                    number: (index + 1).toString().padStart(2, '0'), // Membuat '01', '02', dst.
+                    title: p.title || '',
+                    description: p.description || '',
+                    thumbnail: p.thumbnail || '',
+                    demoLink: p.demoLink || '#',
+                    viewText: p.viewText || 'VIEW PROJECT',
+                }));
+
+                setProjects(formattedProjects);
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProjects();
+    }, []);
+
+    useEffect(() => {
+        if (!sectionRef.current || !contentWrapperRef.current || projects.length < 2) return;
 
         const totalScroll = (projects.length - 1) * window.innerHeight;
 
@@ -77,7 +69,7 @@ export default function Works() {
         });
 
         tl.to(contentWrapperRef.current, {
-            y: `-${totalScroll}`,
+            y: `-${totalScroll}px`,
             ease: 'none',
         });
 
@@ -85,7 +77,15 @@ export default function Works() {
             tl.kill();
             ScrollTrigger.getAll().forEach((t) => t.kill());
         };
-    }, []);
+    }, [projects]);
+
+    if (loading) {
+        return <div className="text-white text-center py-20">Loading...</div>;
+    }
+
+    if (projects.length === 0) {
+        return <div className="text-white text-center py-20">No projects found.</div>;
+    }
 
     return (
         <section ref={sectionRef} className="relative w-full bg-[#121212] text-white h-screen md:h-full overflow-hidden">
