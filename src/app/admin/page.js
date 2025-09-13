@@ -8,7 +8,6 @@ import Image from 'next/image';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
-// Fungsi helper untuk mengekstrak nama file dari URL Blob
 const extractFileNameFromUrl = (url) => {
     if (!url) return '';
     try {
@@ -41,7 +40,7 @@ export default function AdminPage() {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
 
-    const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
+    const MAX_FILE_SIZE = 1 * 1024 * 1024;
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -205,7 +204,7 @@ export default function AdminPage() {
     }
 
     if (!user) {
-        return null; // Tidak perlu render apa pun jika pengguna tidak ada, karena router akan me-redirect
+        return null;
     }
 
     return (

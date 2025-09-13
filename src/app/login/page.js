@@ -18,13 +18,9 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            // Panggil fungsi login Firebase Auth
             await signInWithEmailAndPassword(auth, email, password);
-
-            // Jika berhasil, arahkan ke halaman admin
             router.push('/admin');
         } catch (err) {
-            // Tangani error jika login gagal
             console.error(err.code, err.message);
             if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
                 setError('Invalid email or password.');

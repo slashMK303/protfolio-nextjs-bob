@@ -1,4 +1,3 @@
-// src/app/api/projects/[id]/route.js
 import { db } from '../../../lib/firebase';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { NextResponse } from 'next/server';

@@ -37,7 +37,6 @@ export default function Works() {
 
                 setProjects(formattedProjects);
 
-                // Tambahkan baris ini untuk memperbarui semua ScrollTrigger
                 ScrollTrigger.refresh();
 
             } catch (error) {

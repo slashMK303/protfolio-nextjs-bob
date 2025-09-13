@@ -21,10 +21,10 @@ export default function Skills() {
                         scale: 0.97,
                         scrollTrigger: {
                             trigger: sectionRef.current,
-                            start: "top top", // Ubah start menjadi "top top"
+                            start: "top top", 
                             end: "bottom top",
                             scrub: true,
-                            refreshPriority: 0, // Beri prioritas lebih rendah
+                            refreshPriority: 0,
                         },
                         transformOrigin: "center top",
                         ease: "none",

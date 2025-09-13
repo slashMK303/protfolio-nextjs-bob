@@ -11,7 +11,6 @@ const firebaseConfig = {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Inisialisasi Firebase hanya jika belum ada instance yang berjalan
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
 const auth = getAuth(app);

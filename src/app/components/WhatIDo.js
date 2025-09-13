@@ -15,7 +15,6 @@ export default function WhatIDo() {
 
     useEffect(() => {
         const ctx = gsap.context(() => {
-            // Hide title & service on scroll to 2nd item
             gsap.to([titleRef.current, serviceRef.current], {
                 y: -100,
                 opacity: 0,
@@ -28,7 +27,6 @@ export default function WhatIDo() {
                 },
             });
 
-            // Pin group
             groupsRef.current.forEach((el, i) => {
                 ScrollTrigger.create({
                     trigger: el,
