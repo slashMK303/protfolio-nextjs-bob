@@ -10,6 +10,7 @@
         "postbuild": "next-sitemap"
     },
     "dependencies": {
+        "@vercel/blob": "^1.1.1",
         "firebase": "^12.2.1",
         "framer-motion": "^12.19.1",
         "gsap": "^3.13.0",
