@@ -241,7 +241,7 @@ export default function AdminPage() {
 
     return (
         <div className="bg-[#121212] min-h-screen text-[#e8e8e8] flex">
-            {/* Sidebar/Menu Kiri */}
+
             <div className="hidden lg:flex flex-col w-64 bg-[#232323] p-8 border-r border-[#4d4d4d] h-screen fixed">
                 <h1 className="text-3xl font-extrabold mb-8">NMK Dashboard</h1>
                 <nav className="flex-1">
@@ -265,7 +265,6 @@ export default function AdminPage() {
                 </div>
             </div>
 
-            {/* Konten Utama */}
             <div className="flex-1 p-8 lg:ml-64">
                 <header className="flex lg:hidden justify-between items-center mb-8">
                     <h1 className="text-3xl font-extrabold">NMK Dashboard</h1>
@@ -280,7 +279,7 @@ export default function AdminPage() {
                 </header>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-                    {/* Kolom Kiri: Form Add/Edit */}
+
                     <motion.div
                         className="bg-[#232323] p-8 rounded-xl shadow-lg border border-[#4d4d4d] h-fit"
                         initial={{ opacity: 0, y: 20 }}
@@ -361,7 +360,6 @@ export default function AdminPage() {
                         </form>
                     </motion.div>
 
-                    {/* Kolom Kanan: Daftar Proyek */}
                     <motion.div
                         className="bg-[#232323] p-8 rounded-xl shadow-lg border border-[#4d4d4d] h-fit"
                         initial={{ opacity: 0, y: 20 }}
@@ -389,7 +387,7 @@ export default function AdminPage() {
                                             <span className="font-semibold text-lg text-[#e8e8e8]">{project.title}</span>
                                         </div>
                                         <div className="flex gap-2 mt-2 sm:mt-0">
-                                            {/* Tombol Move Up/Down */}
+
                                             <motion.button
                                                 onClick={() => handleMove(index, 'up')}
                                                 disabled={index === 0}
@@ -408,7 +406,7 @@ export default function AdminPage() {
                                             >
                                                 ▼
                                             </motion.button>
-                                            {/* Tombol Edit/Delete */}
+
                                             <motion.button
                                                 className="bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors duration-200 hover:bg-yellow-700 hover:cursor-pointer"
                                                 onClick={() => handleEdit(project)}
