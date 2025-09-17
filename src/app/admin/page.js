@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { db, auth } from '.././lib/firebase';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, updateDoc, deleteDoc, getDocs, query, orderBy } from 'firebase/firestore';
 import { put } from '@vercel/blob';
 import Image from 'next/image';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 const extractFileNameFromUrl = (url) => {
     if (!url) return '';
@@ -36,6 +37,7 @@ export default function AdminPage() {
         thumbnail: '',
         demoLink: '',
         viewText: 'VIEW PROJECT',
+        order: 0,
     });
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
@@ -48,8 +50,13 @@ export default function AdminPage() {
                 setUser(currentUser);
                 const fetchProjects = async () => {
                     try {
-                        const res = await fetch('/api/projects');
-                        const data = await res.json();
+                        const projectsCollectionRef = collection(db, 'projects');
+                        const q = query(projectsCollectionRef, orderBy('order', 'asc'));
+                        const querySnapshot = await getDocs(q);
+                        const data = querySnapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
                         setProjects(data);
                     } catch (error) {
                         console.error("Failed to fetch projects:", error);
@@ -104,6 +111,7 @@ export default function AdminPage() {
 
         try {
             let thumbnailUrl = formData.thumbnail;
+            let projectDataToSave = {};
 
             if (file) {
                 const response = await fetch(`/api/upload?filename=${file.name}`, {
@@ -118,29 +126,31 @@ export default function AdminPage() {
                 return;
             }
 
-            const projectDataToSave = { ...formData, thumbnail: thumbnailUrl };
-
             if (isEditing) {
-                await fetch(`/api/projects/${currentProjectId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(projectDataToSave),
-                });
+                projectDataToSave = { ...formData, thumbnail: thumbnailUrl };
+                await updateDoc(doc(db, 'projects', currentProjectId), projectDataToSave);
                 alert('Project updated successfully!');
             } else {
+                const newOrder = projects.length > 0 ? Math.max(...projects.map(p => p.order)) + 1 : 1;
+                projectDataToSave = { ...formData, thumbnail: thumbnailUrl, order: newOrder };
                 await addDoc(collection(db, 'projects'), projectDataToSave);
                 alert('Project added successfully!');
             }
 
-            const res = await fetch('/api/projects');
-            const updatedProjects = await res.json();
-            setProjects(updatedProjects);
-
-            setFormData({ title: '', description: '', thumbnail: '', demoLink: '', viewText: 'VIEW PROJECT' });
+            setFormData({ title: '', description: '', thumbnail: '', demoLink: '', viewText: 'VIEW PROJECT', order: 0 });
             setFile(null);
             setThumbnailFileName('');
             setIsEditing(false);
             setCurrentProjectId(null);
+
+            const projectsCollectionRef = collection(db, 'projects');
+            const q = query(projectsCollectionRef, orderBy('order', 'asc'));
+            const querySnapshot = await getDocs(q);
+            const updatedProjects = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setProjects(updatedProjects);
 
         } catch (error) {
             console.error('Error handling project:', error);
@@ -150,22 +160,42 @@ export default function AdminPage() {
         }
     };
 
+    const handleMove = async (index, direction) => {
+        if (direction === 'up' && index === 0) return;
+        if (direction === 'down' && index === projects.length - 1) return;
+
+        const newProjects = [...projects];
+        const currentProject = { ...newProjects[index] };
+        const otherProject = { ...newProjects[direction === 'up' ? index - 1 : index + 1] };
+
+        const tempOrder = currentProject.order;
+        currentProject.order = otherProject.order;
+        otherProject.order = tempOrder;
+
+        newProjects[index] = otherProject;
+        newProjects[direction === 'up' ? index - 1 : index + 1] = currentProject;
+
+        setProjects(newProjects);
+
+        try {
+            await updateDoc(doc(db, 'projects', currentProject.id), { order: currentProject.order });
+            await updateDoc(doc(db, 'projects', otherProject.id), { order: otherProject.order });
+        } catch (error) {
+            console.error('Failed to move project:', error);
+            alert('Failed to update project order in database.');
+        }
+    };
+
     const handleDelete = async (id) => {
         if (!confirm('Are you sure you want to delete this project?')) {
             return;
         }
 
         try {
-            const res = await fetch(`/api/projects/${id}`, {
-                method: 'DELETE',
-            });
+            await deleteDoc(doc(db, 'projects', id));
+            alert('Project deleted successfully!');
 
-            if (res.ok) {
-                alert('Project deleted successfully!');
-                setProjects(projects.filter(p => p.id !== id));
-            } else {
-                alert('Failed to delete project.');
-            }
+            setProjects(projects.filter(p => p.id !== id));
         } catch (error) {
             console.error('Error deleting project:', error);
             alert('An error occurred.');
@@ -181,6 +211,7 @@ export default function AdminPage() {
             thumbnail: project.thumbnail,
             demoLink: project.demoLink,
             viewText: project.viewText,
+            order: project.order,
         });
         setThumbnailFileName(extractFileNameFromUrl(project.thumbnail));
     };
@@ -194,6 +225,7 @@ export default function AdminPage() {
             thumbnail: '',
             demoLink: '',
             viewText: 'VIEW PROJECT',
+            order: 0,
         });
         setThumbnailFileName('');
         setFile(null);
@@ -208,115 +240,199 @@ export default function AdminPage() {
     }
 
     return (
-        <div className="bg-[#121212] min-h-screen text-white p-8">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">{isEditing ? 'Edit Project' : 'Add New Project'}</h1>
-                <button
-                    onClick={handleLogout}
-                    className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition duration-200"
-                >
-                    Logout
-                </button>
+        <div className="bg-[#121212] min-h-screen text-[#e8e8e8] flex">
+            {/* Sidebar/Menu Kiri */}
+            <div className="hidden lg:flex flex-col w-64 bg-[#232323] p-8 border-r border-[#4d4d4d] h-screen fixed">
+                <h1 className="text-3xl font-extrabold mb-8">NMK Dashboard</h1>
+                <nav className="flex-1">
+                    <ul className="space-y-4">
+                        <li>
+                            <a href="#" className="flex items-center gap-4 text-lg font-semibold bg-blue-600 text-white rounded-lg px-4 py-2 transition-colors duration-200">
+                                Projects
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div className="mt-auto">
+                    <motion.button
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 text-lg font-semibold text-red-500 hover:text-red-400 hover:cursor-pointer"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        Logout
+                    </motion.button>
+                </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <input
-                    type="text"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleFormChange}
-                    placeholder="Title"
-                    className="p-3 bg-gray-800 rounded-lg text-white"
-                    required
-                />
-                <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleFormChange}
-                    placeholder="Description"
-                    className="p-3 bg-gray-800 rounded-lg h-32 text-white"
-                    required
-                />
-                <input
-                    type="text"
-                    name="demoLink"
-                    value={formData.demoLink}
-                    onChange={handleFormChange}
-                    placeholder="Demo Link"
-                    className="p-3 bg-gray-800 rounded-lg text-white"
-                    required
-                />
-                <label className="block mb-2 text-sm font-medium text-gray-400">
-                    Upload Thumbnail
-                </label>
-                {isEditing && thumbnailFileName && (
-                    <p className="text-sm text-gray-400 mb-2">
-                        Current file: <span className="font-semibold text-white">{thumbnailFileName}</span>
-                    </p>
-                )}
-                <input
-                    type="file"
-                    onChange={handleFileChange}
-                    className="block w-full text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-full file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-blue-50 file:text-blue-700
-                    hover:file:bg-blue-100"
-                    accept="image/*"
-                    required={!isEditing}
-                />
-                {isEditing && (
-                    <button type="button" onClick={handleCancelEdit} className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
-                        Cancel Edit
-                    </button>
-                )}
-                <button
-                    type="submit"
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200"
-                    disabled={uploading}
-                >
-                    {uploading ? 'Processing...' : (isEditing ? 'Update Project' : 'Add Project')}
-                </button>
-            </form>
+            {/* Konten Utama */}
+            <div className="flex-1 p-8 lg:ml-64">
+                <header className="flex lg:hidden justify-between items-center mb-8">
+                    <h1 className="text-3xl font-extrabold">NMK Dashboard</h1>
+                    <motion.button
+                        onClick={handleLogout}
+                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl text-sm transition duration-200 hover:cursor-pointer"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        Logout
+                    </motion.button>
+                </header>
 
-            <h2 className="text-2xl font-bold mt-10 mb-4">Manage Projects</h2>
-            {loadingProjects ? (
-                <p>Loading projects...</p>
-            ) : (
-                <div className="flex flex-col gap-4">
-                    {projects.map((project) => (
-                        <div key={project.id} className="bg-gray-800 p-4 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                            <div className="flex items-center gap-4">
-                                {project.thumbnail && (
-                                    <Image
-                                        src={project.thumbnail}
-                                        alt={project.title}
-                                        width={80}
-                                        height={60}
-                                        className="rounded-lg object-cover"
-                                    />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+                    {/* Kolom Kiri: Form Add/Edit */}
+                    <motion.div
+                        className="bg-[#232323] p-8 rounded-xl shadow-lg border border-[#4d4d4d] h-fit"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <h2 className="text-3xl font-semibold mb-6">{isEditing ? 'Edit Project' : 'Add New Project'}</h2>
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                            <input
+                                type="text"
+                                name="title"
+                                value={formData.title}
+                                onChange={handleFormChange}
+                                placeholder="Title"
+                                className="w-full px-4 py-3 text-[#e8e8e8] border border-[#4d4d4d] rounded-lg outline-none bg-transparent"
+                                required
+                            />
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleFormChange}
+                                placeholder="Description"
+                                className="w-full px-4 py-3 text-[#e8e8e8] border border-[#4d4d4d] rounded-lg outline-none resize-y bg-transparent"
+                                rows="4"
+                                required
+                            />
+                            <input
+                                type="text"
+                                name="demoLink"
+                                value={formData.demoLink}
+                                onChange={handleFormChange}
+                                placeholder="Demo Link"
+                                className="w-full px-4 py-3 text-[#e8e8e8] border border-[#4d4d4d] rounded-lg outline-none bg-transparent"
+                                required
+                            />
+                            <label className="block text-sm font-medium text-gray-400">
+                                Upload Thumbnail
+                            </label>
+                            {isEditing && thumbnailFileName && (
+                                <p className="text-sm text-gray-400 mb-2">
+                                    Current file: <span className="font-semibold text-white">{thumbnailFileName}</span>
+                                </p>
+                            )}
+                            <input
+                                type="file"
+                                onChange={handleFileChange}
+                                className="block w-full text-sm text-gray-500
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-full file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-blue-50 file:text-blue-700
+                                hover:file:bg-blue-100 hover:cursor-pointer"
+                                accept="image/*"
+                                required={!isEditing}
+                            />
+                            <div className="flex justify-end gap-4 mt-4">
+                                {isEditing && (
+                                    <motion.button
+                                        type="button"
+                                        onClick={handleCancelEdit}
+                                        className="bg-[#4d4d4d] text-[#e8e8e8] px-6 py-3 rounded-xl text-lg font-semibold w-full md:w-auto transition-colors duration-200 hover:bg-[#6c6c6c] hover:cursor-pointer"
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        Cancel
+                                    </motion.button>
                                 )}
-                                <span className="font-semibold text-lg">{project.title}</span>
-                            </div>
-                            <div className="flex gap-2 mt-2 sm:mt-0">
-                                <button
-                                    className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg text-sm"
-                                    onClick={() => handleEdit(project)}
+                                <motion.button
+                                    type="submit"
+                                    disabled={uploading}
+                                    className="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-semibold w-full md:w-auto transition-colors duration-200 hover:bg-blue-700 hover:cursor-pointer"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                 >
-                                    Edit
-                                </button>
-                                <button
-                                    className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-sm"
-                                    onClick={() => handleDelete(project.id)}
-                                >
-                                    Delete
-                                </button>
+                                    {uploading ? 'Processing...' : (isEditing ? 'Update' : 'Add')}
+                                </motion.button>
                             </div>
-                        </div>
-                    ))}
+                        </form>
+                    </motion.div>
+
+                    {/* Kolom Kanan: Daftar Proyek */}
+                    <motion.div
+                        className="bg-[#232323] p-8 rounded-xl shadow-lg border border-[#4d4d4d] h-fit"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                    >
+                        <h2 className="text-3xl font-semibold mb-6">Manage Projects</h2>
+                        {loadingProjects ? (
+                            <p className="text-[#e8e8e8]">Loading projects...</p>
+                        ) : (
+                            <div className="flex flex-col gap-4">
+                                {projects.map((project, index) => (
+                                    <div key={project.id} className="bg-[#4d4d4d] p-4 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                                        <div className="flex items-center gap-4">
+                                            <span className="text-2xl font-bold text-[#e8e8e8]">{(index + 1).toString().padStart(2, '0')}</span>
+                                            {project.thumbnail && (
+                                                <Image
+                                                    src={project.thumbnail}
+                                                    alt={project.title}
+                                                    width={80}
+                                                    height={60}
+                                                    className="rounded-lg object-cover"
+                                                />
+                                            )}
+                                            <span className="font-semibold text-lg text-[#e8e8e8]">{project.title}</span>
+                                        </div>
+                                        <div className="flex gap-2 mt-2 sm:mt-0">
+                                            {/* Tombol Move Up/Down */}
+                                            <motion.button
+                                                onClick={() => handleMove(index, 'up')}
+                                                disabled={index === 0}
+                                                className={`bg-[#e8e8e8] text-[#121212] font-bold py-2 px-4 rounded-lg text-sm transition-colors duration-200 hover:cursor-pointer ${index === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                            >
+                                                ▲
+                                            </motion.button>
+                                            <motion.button
+                                                onClick={() => handleMove(index, 'down')}
+                                                disabled={index === projects.length - 1}
+                                                className={`bg-[#e8e8e8] text-[#121212] font-bold py-2 px-4 rounded-lg text-sm transition-colors duration-200 hover:cursor-pointer ${index === projects.length - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                            >
+                                                ▼
+                                            </motion.button>
+                                            {/* Tombol Edit/Delete */}
+                                            <motion.button
+                                                className="bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors duration-200 hover:bg-yellow-700 hover:cursor-pointer"
+                                                onClick={() => handleEdit(project)}
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                            >
+                                                Edit
+                                            </motion.button>
+                                            <motion.button
+                                                className="bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors duration-200 hover:bg-red-700 hover:cursor-pointer"
+                                                onClick={() => handleDelete(project.id)}
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                            >
+                                                Delete
+                                            </motion.button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </motion.div>
                 </div>
-            )}
+            </div>
         </div>
     );
 }

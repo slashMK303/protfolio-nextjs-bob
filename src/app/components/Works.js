@@ -25,7 +25,9 @@ export default function Works() {
                 }
                 const data = await res.json();
 
-                const formattedProjects = data.map((p, index) => ({
+                const sortedProjects = data.sort((a, b) => (a.order > b.order ? 1 : -1));
+
+                const formattedProjects = sortedProjects.map((p, index) => ({
                     id: p.id,
                     number: (index + 1).toString().padStart(2, '0'),
                     title: p.title || '',
@@ -33,6 +35,7 @@ export default function Works() {
                     thumbnail: p.thumbnail || '',
                     demoLink: p.demoLink || '#',
                     viewText: p.viewText || 'VIEW PROJECT',
+                    order: p.order,
                 }));
 
                 setProjects(formattedProjects);
